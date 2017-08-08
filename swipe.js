@@ -164,13 +164,15 @@ Swipe.prototype.check = function () {
 
   this.swiping = false;
 
-  var direction = null;
   var deltaX = this.game.input.activePointer.position.x - this.game.input.activePointer.positionDown.x;
   var deltaY = this.game.input.activePointer.position.y - this.game.input.activePointer.positionDown.y;
 
   var result = {
+    direction: null,
     x: this.game.input.activePointer.positionDown.x,
-    y: this.game.input.activePointer.positionDown.y
+    y: this.game.input.activePointer.positionDown.y,
+    deltaX: deltaX,
+    deltaY: deltaY
   };
 
   var deltaXabs = Math.abs(deltaX);
@@ -178,39 +180,39 @@ Swipe.prototype.check = function () {
 
   if (!this.diagonalDisabled && deltaXabs > (this.dragLength-this.diagonalDelta) && deltaYabs > (this.dragLength-this.diagonalDelta)) {
     if (deltaX > 0 && deltaY > 0) {
-      direction = this.DIRECTION_DOWN_RIGHT;
+      result.direction = this.DIRECTION_DOWN_RIGHT;
       this.model !== null && this.model.downRight && this.model.downRight(result);
     } else if (deltaX > 0 && deltaY < 0) {
-      direction = this.DIRECTION_UP_RIGHT;
+      result.direction = this.DIRECTION_UP_RIGHT;
       this.model !== null && this.model.upRight && this.model.upRight(result);
     } else if (deltaX < 0 && deltaY > 0) {
-      direction = this.DIRECTION_DOWN_LEFT;
+      result.direction = this.DIRECTION_DOWN_LEFT;
       this.model !== null && this.model.downLeft && this.model.downLeft(result);
     } else if (deltaX < 0 && deltaY < 0) {
-      direction = this.DIRECTION_UP_LEFT;
+      result.direction = this.DIRECTION_UP_LEFT;
       this.model !== null && this.model.upLeft && this.model.upLeft(result);
     }
   } else if (deltaXabs > this.dragLength || deltaYabs > this.dragLength) {
     if (deltaXabs > deltaYabs) {
       if (deltaX > 0) {
-        direction = this.DIRECTION_RIGHT;
+        result.direction = this.DIRECTION_RIGHT;
         this.model !== null && this.model.right && this.model.right(result);
       } else if (deltaX < 0) {
-        direction = this.DIRECTION_LEFT;
+        result.direction = this.DIRECTION_LEFT;
         this.model !== null && this.model.left && this.model.left(result);
       }
     } else {
       if (deltaY > 0) {
-        direction = this.DIRECTION_DOWN;
+        result.direction = this.DIRECTION_DOWN;
         this.model !== null && this.model.down && this.model.down(result);
       } else if (deltaY < 0) {
-        direction = this.DIRECTION_UP;
+        result.direction = this.DIRECTION_UP;
         this.model !== null && this.model.up && this.model.up(result);
       }
     }
   }
-  if (direction !== null) {
-    result['direction'] = direction;
+  
+  if (result.direction !== null) {
     return result;
   }
   return null;
